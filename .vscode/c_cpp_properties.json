@@ -1,0 +1,37 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/qt5",
+                "/usr/include/qt5/QtCore",
+                "/usr/include/qt5/QtGui", 
+                "/usr/include/qt5/QtWidgets",
+                "/usr/include/x86_64-linux-gnu/qt5",
+                "/usr/include/x86_64-linux-gnu/qt5/QtCore",
+                "/usr/include/x86_64-linux-gnu/qt5/QtGui",
+                "/usr/include/x86_64-linux-gnu/qt5/QtWidgets",
+                "/opt/Qt5.12.9/5.12.9/gcc_64/include",
+                "/opt/Qt5.12.9/5.12.9/gcc_64/include/QtCore",
+                "/opt/Qt5.12.9/5.12.9/gcc_64/include/QtGui",
+                "/opt/Qt5.12.9/5.12.9/gcc_64/include/QtWidgets"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "path": [
+                    "/opt/Qt5.12.9/5.12.9/gcc_64/include",
+                    "/usr/include/x86_64-linux-gnu/qt5/QtWidgets",
+                    "/usr/include/c++/7",
+                    "/usr/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}

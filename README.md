@@ -37,6 +37,14 @@
 - **实时帧输出**: 将解码后的视频帧转换为QImage格式供UI显示
 - **视频流控制**: 支持启动/停止/暂停/恢复操作
 
+### 📹 视频录制
+- **实时录制**: 支持将RTSP视频流实时录制为MP4格式文件
+- **一键录制**: 点击录制按钮即可开始/停止录制，操作简便
+- **自动保存**: 录制的视频文件自动保存到`picture/save-video/`目录
+- **文件命名**: 采用时间戳命名格式`yyyyMMdd_HHmmss_zzz.mp4`便于管理
+- **H.264编码**: 使用高效的H.264编码格式，文件小画质佳
+- **25fps录制**: 标准25帧每秒录制帧率，保证视频流畅度
+
 ### 📸 相册
 - **双相册系统**: 截图相册 + 报警相册独立管理
 - **图片缩放**: 支持用户鼠标滚轮缩放（0.2x-3.0x倍数）
@@ -207,6 +215,13 @@ Ip_lineEdit = new QLineEdit("192.168.1.100");  // 替换为实际IP
 2. 选择预设的监控方案
 3. 点击"应用方案"一键配置
 
+#### 🎥 视频录制操作
+1. **开始录制**: 视频流播放后，点击"录制"按钮开始录制
+2. **停止录制**: 再次点击"录制"按钮停止录制
+3. **查看录制**: 录制的视频文件保存在`picture/save-video/`目录中
+4. **文件格式**: 录制文件为MP4格式，采用H.264编码
+5. **文件命名**: 自动按时间戳命名，如`20250919_152030_123.mp4`
+
 > 🔗 **RTSP地址格式**: `rtsp://192.168.1.100/live/0`  
 > 其中`192.168.1.100`为RV1106设备的实际IP地址
 
@@ -332,11 +347,13 @@ rtsp/
 │   │   ├── addvideo.png      # 添加视频图标
 │   │   ├── AI.png            # AI功能图标
 │   │   ├── album.png         # 相册图标
+│   │   ├── videostart.png    # 视频录制图标
 │   │   ├── screenshot.png    # 截图图标
 │   │   └── ...               # 其他界面图标
-│   └── picture/              # 图片存储目录
+│   └── picture/              # 图片和视频存储目录
 │       ├── save-picture/     # 截图相册目录
-│       └── alarm-picture/    # 报警相册目录
+│       ├── alarm-picture/    # 报警相册目录
+│       └── save-video/       # 录制视频存储目录
 │
 ├── ⚙️ 配置文件
 │   ├── rtsp.pro              # Qt项目配置文件
@@ -454,6 +471,23 @@ controller (核心控制器)
 </div>
 
 ---
+#### 📸 视频录制
+
+<div align="center">
+<img src="readme-picture/videostart.png" alt="视频录制" width="700"/>
+</div>
+
+#### 📸 图像截图
+
+<div align="center">
+<img src="readme-picture/picture-screanshot.png" alt="截图" width="700"/>
+</div>
+
+#### 📸 系统文件管理
+
+<div align="center">
+<img src="readme-picture/videofile.png" alt="文件保存位置" width="700"/>
+</div>
 
 #### 📸 相册管理系统
 > 📂 **功能说明**: 分类管理截图和报警图片，支持缩放、排序、删除等操作
@@ -482,6 +516,7 @@ controller (核心控制器)
 | **🔖 物体识别** | 80类COCO对象 | 特定目标监测 |
 | **📋 方案预选** | 一键配置切换 | 多场景快速部署 |
 | **📸 相册管理** | 双相册系统 | 图片分类存储 |
+| **📹 视频录制** | H.264实时录制 | 视频证据保存 |
 | **🌐 TCP通信** | 多客户端支持 | 设备集中控制 |
 
 > 💡 **提示**: 点击图片可查看更清晰的效果展示
@@ -493,6 +528,18 @@ controller (核心控制器)
 如有任何技术问题或建议，欢迎通过与我联系：
 
 📮 **联系**:https://lunexi.icu
+---
+
+### 📧 贡献者
+
+<div align="center">
+<a href="https://github.com/RaidKaeil01" style="margin: 0 10px;">
+  <img src="https://avatars.githubusercontent.com/u/214359169?v=4" alt="RaidKaeil01" width="60" height="60" style="border-radius: 50%; border: 2px solid #ddd;">
+</a>
+<a href="https://github.com/RaidKaeil01" style="margin: 0 10px;">
+  <img src="https://avatars.githubusercontent.com/u/201902949?v=4" alt="RaidKaeil01" width="60" height="60" style="border-radius: 50%; border: 2px solid #ddd;">
+</a>
+</div>
 
 ---
 

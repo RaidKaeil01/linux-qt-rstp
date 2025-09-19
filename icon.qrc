@@ -16,6 +16,5 @@
         <file>icon/rect.png</file>
         <file>icon/object.png</file>
         <file>icon/lmx.png</file>
-        <file>icon/videostart.png</file>
     </qresource>
 </RCC>

@@ -46,10 +46,11 @@ Controller::Controller(Model* model, View* view, QObject* parent)
 
 Controller::~Controller()
 {
-    // 确保录制停止
+    // 如果正在录制，先停止录制
     if (m_isRecording) {
         stopRecording();
     }
+    
     m_model->stopStream();
     m_model->wait();
 }
@@ -202,6 +203,7 @@ void Controller::ButtonClickedHandler()
 
     case 2:
         qDebug() << "录制";
+        // 切换录制状态
         if (!m_isRecording) {
             startRecording();
         } else {
@@ -758,97 +760,83 @@ void Controller::onDetectionDataReceived(const QString& detectionData)
     saveAlarmImage(detectionData);
 }
 
-// ================== 录制功能实现 ==================
-
 void Controller::startRecording()
 {
-    if (m_lastImage.isNull()) {
-        QMessageBox::warning(m_view, "提示", "当前没有可录制的图像！");
-        m_view->addEventMessage("warning", "当前没有可录制的图像！");
+    if (m_isRecording) {
+        qDebug() << "已经在录制中";
         return;
     }
-    
-    // 确保picture文件夹存在（使用源码路径）
+
+    if (m_lastImage.isNull()) {
+        QMessageBox::warning(m_view, "提示", "当前没有视频流，无法开始录制！");
+        m_view->addEventMessage("warning", "当前没有视频流，无法开始录制！");
+        return;
+    }
+
+    // 确保picture/save-video文件夹存在（参考截图功能的实现）
     QString sourcePath = QString(__FILE__).section('/', 0, -2); // 获取源码目录路径
-    QDir dir(sourcePath + "/picture/save-picture");
-    if (!dir.exists()) dir.mkpath(".");
-    
-    // 生成文件名
+    QDir dir(sourcePath + "/picture/save-video");
+    if (!dir.exists()) {
+        dir.mkpath("."); // 创建目录
+    }
+
+    // 生成录制文件名
     m_recordFileName = dir.filePath(QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss_zzz") + ".mp4");
-    
-    // 创建OpenCV视频写入器
-    m_videoWriter = new cv::VideoWriter();
-    
-    // 设置视频参数
-    int fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v'); // MP4编码
-    double fps = 25.0;
-    cv::Size frameSize(m_lastImage.width(), m_lastImage.height());
-    
-    if (m_videoWriter->open(m_recordFileName.toStdString(), fourcc, fps, frameSize, true)) {
-        m_isRecording = true;
-        qDebug() << "开始录制到:" << m_recordFileName;
-        QMessageBox::information(m_view, "录制开始", "视频录制已开始！\n文件路径: " + m_recordFileName);
-        m_view->addEventMessage("success", "视频录制已开始！文件: " + QFileInfo(m_recordFileName).fileName());
-        
-        // 更新录制按钮状态（如果按钮支持选中状态）
-        QList<QPushButton*> tabButtons = m_view->getTabButtons();
-        if (tabButtons.size() > 2) {
-            tabButtons[2]->setText("停止录制");
-        }
-    } else {
+
+    // 初始化视频写入器
+    cv::Size videoSize(m_lastImage.width(), m_lastImage.height());
+    m_videoWriter = new cv::VideoWriter(m_recordFileName.toStdString(), 
+                                       cv::VideoWriter::fourcc('X','2','6','4'), 
+                                       25.0, // 25 FPS
+                                       videoSize);
+
+    if (!m_videoWriter->isOpened()) {
+        QMessageBox::critical(m_view, "录制失败", "无法创建视频文件！");
+        m_view->addEventMessage("error", "无法创建视频文件！");
         delete m_videoWriter;
         m_videoWriter = nullptr;
-        QMessageBox::critical(m_view, "录制失败", "无法启动视频录制！");
-        m_view->addEventMessage("error", "视频录制启动失败！");
+        return;
     }
+
+    m_isRecording = true;
+    QMessageBox::information(m_view, "录制开始", "视频录制已开始！\n保存路径: " + m_recordFileName);
+    m_view->addEventMessage("success", "视频录制已开始！保存路径: " + m_recordFileName);
+    qDebug() << "开始录制视频到:" << m_recordFileName;
 }
 
 void Controller::stopRecording()
 {
-    if (!m_isRecording || !m_videoWriter) {
+    if (!m_isRecording) {
+        qDebug() << "当前没有在录制";
         return;
     }
-    
+
     m_isRecording = false;
-    if (m_videoWriter->isOpened()) {
+    
+    if (m_videoWriter) {
         m_videoWriter->release();
+        delete m_videoWriter;
+        m_videoWriter = nullptr;
     }
-    delete m_videoWriter;
-    m_videoWriter = nullptr;
-    
-    qDebug() << "录制结束:" << m_recordFileName;
-    QMessageBox::information(m_view, "录制完成", "视频已保存到: " + m_recordFileName);
-    m_view->addEventMessage("success", "视频录制完成！文件: " + QFileInfo(m_recordFileName).fileName());
-    
-    // 恢复录制按钮状态
-    QList<QPushButton*> tabButtons = m_view->getTabButtons();
-    if (tabButtons.size() > 2) {
-        tabButtons[2]->setText("录制");
-    }
+
+    QMessageBox::information(m_view, "录制完成", "视频录制已完成！\n保存路径: " + m_recordFileName);
+    m_view->addEventMessage("success", "视频录制已完成！保存路径: " + m_recordFileName);
+    qDebug() << "录制完成，文件保存到:" << m_recordFileName;
 }
 
 void Controller::writeVideoFrame(const QImage& frame)
 {
-    if (!m_isRecording || !m_videoWriter || !m_videoWriter->isOpened()) {
+    if (!m_isRecording || !m_videoWriter || frame.isNull()) {
         return;
     }
-    
+
     // 将QImage转换为cv::Mat
-    cv::Mat cvFrame;
-    
-    // 确保图像格式正确
-    QImage rgbFrame = frame.convertToFormat(QImage::Format_RGB888);
-    cvFrame = cv::Mat(rgbFrame.height(), rgbFrame.width(), CV_8UC3, (void*)rgbFrame.constBits(), rgbFrame.bytesPerLine());
-    
-    // 从RGB转换为BGR（OpenCV默认格式）
-    cv::Mat bgrFrame;
-    cv::cvtColor(cvFrame, bgrFrame, cv::COLOR_RGB2BGR);
-    
+    QImage rgbImage = frame.rgbSwapped(); // Qt默认为BGRA，OpenCV为RGBA
+    cv::Mat mat(rgbImage.height(), rgbImage.width(), CV_8UC3, (void*)rgbImage.constBits(), rgbImage.bytesPerLine());
+    cv::Mat bgrMat;
+    cv::cvtColor(mat, bgrMat, cv::COLOR_RGB2BGR);
+
     // 写入视频帧
-    try {
-        m_videoWriter->write(bgrFrame);
-    } catch (const cv::Exception& e) {
-        qDebug() << "写入视频帧失败:" << e.what();
-    }
+    m_videoWriter->write(bgrMat);
 }
 
