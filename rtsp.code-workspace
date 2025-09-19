@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"qpushbutton": "cpp",
+			"string": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"vector": "cpp"
+		}
+	}
+}
