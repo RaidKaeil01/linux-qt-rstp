@@ -20,6 +20,7 @@ private slots:
     void onCloseClicked(); // 关闭窗口
     void onScreenshotAlbumClicked(); // 截图相册
     void onAlarmAlbumClicked(); // 报警相册
+    void onVideoAlbumClicked(); // 视频相册
     void onSliderValueChanged(int value); // 滑动条值改变
     void onJumpToImage(); // 跳转到指定图片
     void onDeleteImage(); // 删除当前图片
@@ -30,6 +31,7 @@ private:
     void updateImage();   // 更新当前显示图片
     void updateImageInfo(); // 更新图片信息显示
     void sortImages();    // 对图片按时间排序
+    void updateAlbumButtonStyles(); // 更新相册按钮样式
     QString extractTimeFromFilename(const QString& filename); // 从文件名提取时间
     QString formatFileSize(qint64 size); // 格式化文件大小
 
@@ -39,6 +41,7 @@ private:
     QPushButton* closeBtn; // 关闭按钮
     QPushButton* screenshotAlbumBtn; // 截图相册按钮
     QPushButton* alarmAlbumBtn;      // 报警相册按钮
+    QPushButton* videoAlbumBtn;      // 视频相册按钮
     QPushButton* deleteBtn;          // 删除按钮
     QSlider* imageSlider;            // 图片导航滑动条
     QLineEdit* jumpEdit;             // 跳转输入框
@@ -49,7 +52,14 @@ private:
     QStringList imageFiles; // 图片文件路径列表
     int currentIndex;     // 当前图片索引
     double scaleFactor = 1.0; // 当前缩放比例
-    bool isScreenshotAlbum = true; // 当前是否为截图相册模式，默认true
+    
+    // 相册模式枚举
+    enum AlbumMode {
+        ScreenshotAlbum = 0,  // 截图相册
+        AlarmAlbum = 1,       // 报警相册
+        VideoAlbum = 2        // 视频相册
+    };
+    AlbumMode currentAlbumMode = ScreenshotAlbum; // 当前相册模式，默认截图相册
     bool isAscendingOrder = false; // 是否按时间升序排列，默认false(降序)
 
 protected:

@@ -42,6 +42,7 @@ Picture::Picture(QWidget* parent)
     closeBtn = new QPushButton("关闭", this); // 关闭按钮
     screenshotAlbumBtn = new QPushButton("截图相册", this);
     alarmAlbumBtn = new QPushButton("报警相册", this);
+    videoAlbumBtn = new QPushButton("视频相册", this);
     deleteBtn = new QPushButton("删除图片", this);
     
     // 创建新的控件
@@ -202,7 +203,7 @@ Picture::Picture(QWidget* parent)
         "  background-color: #bd2130;"
         "}"
     );
-    // 截图相册按钮默认选中（橙色），报警相册按钮默认未选中（绿色）
+    // 截图相册按钮默认选中（橙色），报警相册和视频相册按钮默认未选中
     screenshotAlbumBtn->setStyleSheet(
         "QPushButton {"
         "  background-color: #fd7e14;"
@@ -232,6 +233,22 @@ Picture::Picture(QWidget* parent)
         "  background-color: #f8f9fa;"
         "  border-color: #1e7e34;"
         "  color: #1e7e34;"
+        "}"
+    );
+    videoAlbumBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #ffffff;"
+        "  border: 2px solid #6f42c1;"
+        "  border-radius: 10px;"
+        "  font-size: 14px;"
+        "  font-weight: bold;"
+        "  padding: 8px 16px;"
+        "  color: #6f42c1;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #f8f9fa;"
+        "  border-color: #5a2d91;"
+        "  color: #5a2d91;"
         "}"
     );
     
@@ -305,6 +322,7 @@ Picture::Picture(QWidget* parent)
     closeBtn->setFixedSize(60, 30);
     screenshotAlbumBtn->setFixedSize(100, 35);
     alarmAlbumBtn->setFixedSize(100, 35);
+    videoAlbumBtn->setFixedSize(100, 35);
     deleteBtn->setFixedSize(80, 30);
     jumpBtn->setFixedSize(50, 25);
     
@@ -329,6 +347,7 @@ Picture::Picture(QWidget* parent)
     QHBoxLayout* leftButtonLayout = new QHBoxLayout();
     leftButtonLayout->addWidget(screenshotAlbumBtn);
     leftButtonLayout->addWidget(alarmAlbumBtn);
+    leftButtonLayout->addWidget(videoAlbumBtn);
     leftButtonLayout->addStretch(); // 左侧按钮组内部的弹性空间
     
     // 右侧按钮组
@@ -395,6 +414,7 @@ Picture::Picture(QWidget* parent)
     connect(closeBtn, &QPushButton::clicked, this, &Picture::onCloseClicked);
     connect(screenshotAlbumBtn, &QPushButton::clicked, this, &Picture::onScreenshotAlbumClicked);
     connect(alarmAlbumBtn, &QPushButton::clicked, this, &Picture::onAlarmAlbumClicked);
+    connect(videoAlbumBtn, &QPushButton::clicked, this, &Picture::onVideoAlbumClicked);
     
     // 新增控件的信号槽连接
     connect(deleteBtn, &QPushButton::clicked, this, &Picture::onDeleteImage);
@@ -403,6 +423,9 @@ Picture::Picture(QWidget* parent)
     connect(jumpEdit, &QLineEdit::returnPressed, this, &Picture::onJumpToImage);
     connect(sortComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Picture::onSortOrderChanged);
 
+    // 初始化按钮样式
+    updateAlbumButtonStyles();
+    
     // 加载图片
     loadImages();
     updateImage();
@@ -417,10 +440,16 @@ void Picture::loadImages()
     QString sourcePath = QString(__FILE__).section('/', 0, -2); // 获取源码目录路径
     QString albumPath;
     
-    if (isScreenshotAlbum) {
-        albumPath = sourcePath + "/picture/save-picture";
-    } else {
-        albumPath = sourcePath + "/picture/alarm-picture";
+    switch (currentAlbumMode) {
+        case ScreenshotAlbum:
+            albumPath = sourcePath + "/picture/save-picture";
+            break;
+        case AlarmAlbum:
+            albumPath = sourcePath + "/picture/alarm-picture";
+            break;
+        case VideoAlbum:
+            albumPath = sourcePath + "/picture/save-video";
+            break;
     }
     
     QDir dir(albumPath);
@@ -430,7 +459,14 @@ void Picture::loadImages()
     }
     
     QStringList filters;
-    filters << "*.jpg" << "*.png" << "*.jpeg" << "*.bmp" << "*.mp4" << "*.avi" << "*.mov";
+    if (currentAlbumMode == VideoAlbum) {
+        // 视频相册只显示视频文件
+        filters << "*.mp4" << "*.avi" << "*.mov" << "*.mkv" << "*.flv" << "*.wmv";
+    } else {
+        // 图片相册显示图片和视频文件
+        filters << "*.jpg" << "*.png" << "*.jpeg" << "*.bmp" << "*.mp4" << "*.avi" << "*.mov";
+    }
+    
     QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files | QDir::NoSymLinks);
     for (const QFileInfo& fileInfo : fileList) {
         imageFiles << fileInfo.absoluteFilePath();
@@ -524,42 +560,12 @@ void Picture::onCloseClicked()
 
 void Picture::onScreenshotAlbumClicked()
 {
-    if (!isScreenshotAlbum) {
+    if (currentAlbumMode != ScreenshotAlbum) {
         // 切换到截图相册模式
-        isScreenshotAlbum = true;
+        currentAlbumMode = ScreenshotAlbum;
         
-        // 更新按钮样式 - 截图相册选中（橙色），报警相册未选中（白色边框绿色）
-        screenshotAlbumBtn->setStyleSheet(
-            "QPushButton {"
-            "  background-color: #fd7e14;"
-            "  border: 2px solid #fd7e14;"
-            "  border-radius: 10px;"
-            "  font-size: 14px;"
-            "  font-weight: bold;"
-            "  padding: 8px 16px;"
-            "  color: white;"
-            "}"
-            "QPushButton:hover {"
-            "  background-color: #e8660c;"
-            "  border-color: #e8660c;"
-            "}"
-        );
-        alarmAlbumBtn->setStyleSheet(
-            "QPushButton {"
-            "  background-color: #ffffff;"
-            "  border: 2px solid #28a745;"
-            "  border-radius: 10px;"
-            "  font-size: 14px;"
-            "  font-weight: bold;"
-            "  padding: 8px 16px;"
-            "  color: #28a745;"
-            "}"
-            "QPushButton:hover {"
-            "  background-color: #f8f9fa;"
-            "  border-color: #1e7e34;"
-            "  color: #1e7e34;"
-            "}"
-        );
+        // 更新按钮样式 - 截图相册选中（橙色），其他未选中
+        updateAlbumButtonStyles();
         
         // 重新加载截图相册的图片
         loadImages();
@@ -572,42 +578,12 @@ void Picture::onScreenshotAlbumClicked()
 
 void Picture::onAlarmAlbumClicked()
 {
-    if (isScreenshotAlbum) {
+    if (currentAlbumMode != AlarmAlbum) {
         // 切换到报警相册模式
-        isScreenshotAlbum = false;
+        currentAlbumMode = AlarmAlbum;
         
-        // 更新按钮样式 - 报警相册选中（绿色），截图相册未选中（白色边框橙色）
-        screenshotAlbumBtn->setStyleSheet(
-            "QPushButton {"
-            "  background-color: #ffffff;"
-            "  border: 2px solid #fd7e14;"
-            "  border-radius: 10px;"
-            "  font-size: 14px;"
-            "  font-weight: bold;"
-            "  padding: 8px 16px;"
-            "  color: #fd7e14;"
-            "}"
-            "QPushButton:hover {"
-            "  background-color: #f8f9fa;"
-            "  border-color: #e8660c;"
-            "  color: #e8660c;"
-            "}"
-        );
-        alarmAlbumBtn->setStyleSheet(
-            "QPushButton {"
-            "  background-color: #28a745;"
-            "  border: 2px solid #28a745;"
-            "  border-radius: 10px;"
-            "  font-size: 14px;"
-            "  font-weight: bold;"
-            "  padding: 8px 16px;"
-            "  color: white;"
-            "}"
-            "QPushButton:hover {"
-            "  background-color: #1e7e34;"
-            "  border-color: #1e7e34;"
-            "}"
-        );
+        // 更新按钮样式 - 报警相册选中（绿色），其他未选中
+        updateAlbumButtonStyles();
         
         // 重新加载报警相册的图片
         loadImages();
@@ -615,6 +591,24 @@ void Picture::onAlarmAlbumClicked()
         
         // 更新窗口标题
         this->setWindowTitle("电子相册 - 报警相册");
+    }
+}
+
+void Picture::onVideoAlbumClicked()
+{
+    if (currentAlbumMode != VideoAlbum) {
+        // 切换到视频相册模式
+        currentAlbumMode = VideoAlbum;
+        
+        // 更新按钮样式 - 视频相册选中（紫色），其他未选中
+        updateAlbumButtonStyles();
+        
+        // 重新加载视频相册的文件
+        loadImages();
+        updateImage();
+        
+        // 更新窗口标题
+        this->setWindowTitle("电子相册 - 视频相册");
     }
 }
 
@@ -804,5 +798,116 @@ QString Picture::formatFileSize(qint64 size)
         return QString::number(size / (double)KB, 'f', 2) + " KB";
     } else {
         return QString::number(size) + " B";
+    }
+}
+
+void Picture::updateAlbumButtonStyles()
+{
+    // 截图相册按钮样式
+    if (currentAlbumMode == ScreenshotAlbum) {
+        screenshotAlbumBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: #fd7e14;"
+            "  border: 2px solid #fd7e14;"
+            "  border-radius: 10px;"
+            "  font-size: 14px;"
+            "  font-weight: bold;"
+            "  padding: 8px 16px;"
+            "  color: white;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: #e8660c;"
+            "  border-color: #e8660c;"
+            "}"
+        );
+    } else {
+        screenshotAlbumBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: #ffffff;"
+            "  border: 2px solid #fd7e14;"
+            "  border-radius: 10px;"
+            "  font-size: 14px;"
+            "  font-weight: bold;"
+            "  padding: 8px 16px;"
+            "  color: #fd7e14;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: #f8f9fa;"
+            "  border-color: #e8660c;"
+            "  color: #e8660c;"
+            "}"
+        );
+    }
+    
+    // 报警相册按钮样式
+    if (currentAlbumMode == AlarmAlbum) {
+        alarmAlbumBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: #28a745;"
+            "  border: 2px solid #28a745;"
+            "  border-radius: 10px;"
+            "  font-size: 14px;"
+            "  font-weight: bold;"
+            "  padding: 8px 16px;"
+            "  color: white;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: #1e7e34;"
+            "  border-color: #1e7e34;"
+            "}"
+        );
+    } else {
+        alarmAlbumBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: #ffffff;"
+            "  border: 2px solid #28a745;"
+            "  border-radius: 10px;"
+            "  font-size: 14px;"
+            "  font-weight: bold;"
+            "  padding: 8px 16px;"
+            "  color: #28a745;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: #f8f9fa;"
+            "  border-color: #1e7e34;"
+            "  color: #1e7e34;"
+            "}"
+        );
+    }
+    
+    // 视频相册按钮样式
+    if (currentAlbumMode == VideoAlbum) {
+        videoAlbumBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: #6f42c1;"
+            "  border: 2px solid #6f42c1;"
+            "  border-radius: 10px;"
+            "  font-size: 14px;"
+            "  font-weight: bold;"
+            "  padding: 8px 16px;"
+            "  color: white;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: #5a2d91;"
+            "  border-color: #5a2d91;"
+            "}"
+        );
+    } else {
+        videoAlbumBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: #ffffff;"
+            "  border: 2px solid #6f42c1;"
+            "  border-radius: 10px;"
+            "  font-size: 14px;"
+            "  font-weight: bold;"
+            "  padding: 8px 16px;"
+            "  color: #6f42c1;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: #f8f9fa;"
+            "  border-color: #5a2d91;"
+            "  color: #5a2d91;"
+            "}"
+        );
     }
 }

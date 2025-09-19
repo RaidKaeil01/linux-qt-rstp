@@ -410,7 +410,6 @@ qrc_icon.cpp: icon.qrc \
 		icon/reset.png \
 		icon/draw.png \
 		icon/closevideo.png \
-		icon/videostart.png \
 		icon/addvideo.png \
 		icon/screenshot.png \
 		icon/tcp.png \
