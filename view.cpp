@@ -20,8 +20,11 @@
 #include <QScrollBar>
 
 View::View(QWidget* parent)
-    : QWidget(parent), m_hasRectangle(false)
+    : QWidget(parent), m_hasRectangle(false), m_isMultiStreamMode(false)
 {
+    // 初始化多路流组件
+    initMultiStreamComponents();
+    
     // 创建主水平布局
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
 
@@ -43,6 +46,12 @@ View::View(QWidget* parent)
 View::~View()
 {
     delete videoLabel;
+    if (m_streamManager) {
+        delete m_streamManager;
+    }
+    if (m_streamController) {
+        delete m_streamController;
+    }
 }
 
 QLabel *View::getVideoLabel() const
@@ -125,10 +134,26 @@ void View::initmiddle()
 
     // 初始化视频显示标签
     initVideoLabel();
+    
+    // 初始化视频网格
+    initVideoGrid();
 
-    // 将功能按钮面板和视频标签添加到中间布局
+    // 创建堆叠窗口用于单路/多路切换
+    m_videoStackedWidget = new QStackedWidget();
+    m_videoStackedWidget->addWidget(videoLabel);  // 索引0：单路模式
+    m_videoStackedWidget->addWidget(m_videoGrid); // 索引1：多路模式
+    m_videoStackedWidget->setCurrentIndex(0);     // 默认单路模式
+
+    // 初始化网格控制组件
+    initGridControls();
+
+    // 将组件添加到中间布局
     middleLayout->addWidget(funPanel, 1);
-    middleLayout->addWidget(videoLabel, 8);
+    middleLayout->addWidget(m_videoStackedWidget, 8);
+    middleLayout->addWidget(m_gridControlPanel, 0);
+    
+    // 初始状态：隐藏网格控制面板
+    updateGridControlsVisibility();
 }
 
 void View::initright()
@@ -531,6 +556,307 @@ void View::addEventMessage(const QString& type, const QString& message)
 
     // 自动滚动到底部显示最新消息
     eventBrowser->verticalScrollBar()->setValue(eventBrowser->verticalScrollBar()->maximum());
+}
+
+// 初始化多路流组件
+void View::initMultiStreamComponents()
+{
+    // 创建流管理器
+    m_streamManager = new MultiStreamManager(this);
+    
+    // 创建流控制器
+    m_streamController = new MultiStreamController(this);
+    m_streamController->setStreamManager(m_streamManager);
+}
+
+// 初始化视频网格
+void View::initVideoGrid()
+{
+    m_videoGrid = new VideoGridWidget(this);
+    
+    // 连接流控制器和视频网格
+    if (m_streamController) {
+        m_streamController->setVideoGrid(m_videoGrid);
+    }
+}
+
+// 初始化网格控制组件
+void View::initGridControls()
+{
+    // 创建网格控制面板
+    m_gridControlPanel = new QWidget(this);
+    QHBoxLayout* gridLayout = new QHBoxLayout(m_gridControlPanel);
+    
+    // 设置面板样式
+    m_gridControlPanel->setStyleSheet(R"(
+        QWidget {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        QRadioButton {
+            font-size: 12px;
+            margin: 2px;
+        }
+        QPushButton {
+            font-size: 12px;
+            padding: 4px 8px;
+            background-color: #007acc;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+        QPushButton:hover {
+            background-color: #005fa3;
+        }
+        QSpinBox {
+            font-size: 12px;
+            padding: 2px;
+        }
+        QLabel {
+            font-size: 12px;
+            font-weight: bold;
+        }
+    )");
+    
+    // 网格数选择
+    m_gridLabel = new QLabel("网格数:", m_gridControlPanel);
+    m_gridRadio1 = new QRadioButton("1", m_gridControlPanel);
+    m_gridRadio4 = new QRadioButton("4", m_gridControlPanel);
+    m_gridRadio9 = new QRadioButton("9", m_gridControlPanel);
+    m_gridRadio16 = new QRadioButton("16", m_gridControlPanel);
+    m_gridRadio25 = new QRadioButton("25", m_gridControlPanel);
+    m_gridRadio36 = new QRadioButton("36", m_gridControlPanel);
+    
+    // 默认选中单路模式(1)
+    m_gridRadio1->setChecked(true);
+    
+    // 分页控制组件
+    m_pageControlPanel = new QWidget(m_gridControlPanel);
+    QHBoxLayout* pageLayout = new QHBoxLayout(m_pageControlPanel);
+    pageLayout->setMargin(0);
+    
+    m_prevPageBtn = new QPushButton("上一页", m_pageControlPanel);
+    m_nextPageBtn = new QPushButton("下一页", m_pageControlPanel);
+    m_pageSpinBox = new QSpinBox(m_pageControlPanel);
+    m_pageSpinBox->setMinimum(1);
+    m_pageSpinBox->setValue(1);
+    m_jumpPageBtn = new QPushButton("跳转", m_pageControlPanel);
+    m_pageStatusLabel = new QLabel("页面: 1/1", m_pageControlPanel);
+    
+    pageLayout->addWidget(m_prevPageBtn);
+    pageLayout->addWidget(m_pageSpinBox);
+    pageLayout->addWidget(m_jumpPageBtn);
+    pageLayout->addWidget(m_nextPageBtn);
+    pageLayout->addWidget(m_pageStatusLabel);
+    
+    // 多路流控制按钮
+    m_addStreamBtn = new QPushButton("添加流", m_gridControlPanel);
+    m_removeStreamBtn = new QPushButton("移除流", m_gridControlPanel);
+    
+    // 添加所有组件到布局
+    gridLayout->addWidget(m_gridLabel);
+    gridLayout->addWidget(m_gridRadio1);
+    gridLayout->addWidget(m_gridRadio4);
+    gridLayout->addWidget(m_gridRadio9);
+    gridLayout->addWidget(m_gridRadio16);
+    gridLayout->addWidget(m_gridRadio25);
+    gridLayout->addWidget(m_gridRadio36);
+    gridLayout->addStretch();
+    gridLayout->addWidget(m_pageControlPanel);
+    gridLayout->addStretch();
+    gridLayout->addWidget(m_addStreamBtn);
+    gridLayout->addWidget(m_removeStreamBtn);
+    
+    // 连接信号和槽
+    connect(m_gridRadio1, &QRadioButton::clicked, this, &View::onGridModeChanged);
+    connect(m_gridRadio4, &QRadioButton::clicked, this, &View::onGridModeChanged);
+    connect(m_gridRadio9, &QRadioButton::clicked, this, &View::onGridModeChanged);
+    connect(m_gridRadio16, &QRadioButton::clicked, this, &View::onGridModeChanged);
+    connect(m_gridRadio25, &QRadioButton::clicked, this, &View::onGridModeChanged);
+    connect(m_gridRadio36, &QRadioButton::clicked, this, &View::onGridModeChanged);
+    
+    connect(m_prevPageBtn, &QPushButton::clicked, this, &View::onPrevPageClicked);
+    connect(m_nextPageBtn, &QPushButton::clicked, this, &View::onNextPageClicked);
+    connect(m_jumpPageBtn, &QPushButton::clicked, this, &View::onPageJumpClicked);
+    
+    connect(m_addStreamBtn, &QPushButton::clicked, this, &View::onAddMultiStreamClicked);
+    connect(m_removeStreamBtn, &QPushButton::clicked, this, &View::onRemoveMultiStreamClicked);
+}
+
+// 更新网格控件可见性
+void View::updateGridControlsVisibility()
+{
+    if (m_gridControlPanel) {
+        // 根据网格选择决定控件可见性
+        if (m_gridRadio1->isChecked()) {
+            // 单路模式：隐藏多路相关控件
+            m_pageControlPanel->setVisible(false);
+            m_addStreamBtn->setVisible(false);
+            m_removeStreamBtn->setVisible(false);
+            m_gridControlPanel->setVisible(true); // 保持网格选择可见
+        } else {
+            // 多路模式：显示所有控件
+            m_pageControlPanel->setVisible(true);
+            m_addStreamBtn->setVisible(true);
+            m_removeStreamBtn->setVisible(true);
+            m_gridControlPanel->setVisible(true);
+        }
+    }
+}
+
+// 网格模式改变槽函数
+void View::onGridModeChanged()
+{
+    int gridNum = 1;
+    bool isMultiMode = false;
+    
+    if (m_gridRadio1->isChecked()) {
+        gridNum = 1;
+        isMultiMode = false;
+    } else if (m_gridRadio4->isChecked()) {
+        gridNum = 4;
+        isMultiMode = true;
+    } else if (m_gridRadio9->isChecked()) {
+        gridNum = 9;
+        isMultiMode = true;
+    } else if (m_gridRadio16->isChecked()) {
+        gridNum = 16;
+        isMultiMode = true;
+    } else if (m_gridRadio25->isChecked()) {
+        gridNum = 25;
+        isMultiMode = true;
+    } else if (m_gridRadio36->isChecked()) {
+        gridNum = 36;
+        isMultiMode = true;
+    }
+    
+    // 设置视频显示模式
+    setVideoDisplayMode(isMultiMode);
+    
+    // 设置网格布局
+    if (isMultiMode && m_streamController) {
+        GridLayout layout;
+        switch(gridNum) {
+            case 4: layout = GridLayout::Grid_2x2; break;
+            case 9: layout = GridLayout::Grid_3x3; break;
+            case 16: layout = GridLayout::Grid_4x4; break;
+            case 25: layout = GridLayout::Grid_5x5; break;
+            case 36: layout = GridLayout::Grid_6x6; break;
+            default: layout = GridLayout::Grid_1x1; break;
+        }
+        m_streamController->setGridLayout(layout);
+    }
+    
+    // 更新控件可见性
+    updateGridControlsVisibility();
+    
+    // 发送信号
+    emit gridLayoutChanged(gridNum);
+    emit videoDisplayModeChanged(isMultiMode);
+}
+
+// 设置视频显示模式
+void View::setVideoDisplayMode(bool multiMode)
+{
+    m_isMultiStreamMode = multiMode;
+    
+    if (m_videoStackedWidget) {
+        m_videoStackedWidget->setCurrentIndex(multiMode ? 1 : 0);
+    }
+    
+    updateGridControlsVisibility();
+}
+
+// 添加多路流槽函数
+void View::onAddMultiStreamClicked()
+{
+    // 弹出输入对话框获取RTSP URL
+    bool ok;
+    QString url = QInputDialog::getText(this, "添加视频流", 
+                                       "请输入RTSP地址:", 
+                                       QLineEdit::Normal,
+                                       "rtsp://", 
+                                       &ok);
+    
+    if (ok && !url.isEmpty()) {
+        if (m_streamController) {
+            int handle = m_streamController->addStream(url);
+            if (handle >= 0) {
+                emit streamAdded(url);
+                addEventMessage("success", "成功添加视频流: " + url);
+            } else {
+                addEventMessage("error", "添加视频流失败: " + url);
+            }
+        }
+    }
+}
+
+// 移除多路流槽函数  
+void View::onRemoveMultiStreamClicked()
+{
+    if (m_streamController) {
+        // 获取当前选中的视频索引对应的句柄
+        // 这里简化处理，实际应该获取用户选中的流
+        QList<int> handles = m_streamController->getAllStreamHandles();
+        if (!handles.isEmpty()) {
+            int handle = handles.last(); // 移除最后一个流
+            m_streamController->removeStream(handle);
+            emit streamRemoved(handle);
+        }
+    }
+}
+
+// 分页控制槽函数
+void View::onPrevPageClicked()
+{
+    if (m_streamController) {
+        int currentPage = m_streamController->getCurrentPage();
+        if (currentPage > 1) {
+            m_streamController->setCurrentPage(currentPage - 1);
+            m_pageSpinBox->setValue(currentPage - 1);
+        }
+    }
+}
+
+void View::onNextPageClicked()
+{
+    if (m_streamController) {
+        int currentPage = m_streamController->getCurrentPage();
+        // 这里应该检查总页数，简化处理
+        m_streamController->setCurrentPage(currentPage + 1);
+        m_pageSpinBox->setValue(currentPage + 1);
+    }
+}
+
+void View::onPageJumpClicked()
+{
+    if (m_streamController) {
+        int targetPage = m_pageSpinBox->value();
+        m_streamController->setCurrentPage(targetPage);
+    }
+}
+
+// 获取接口实现
+VideoGridWidget* View::getVideoGrid() const
+{
+    return m_videoGrid;
+}
+
+MultiStreamManager* View::getStreamManager() const
+{
+    return m_streamManager;
+}
+
+MultiStreamController* View::getStreamController() const
+{
+    return m_streamController;
+}
+
+bool View::isMultiStreamMode() const
+{
+    return m_isMultiStreamMode;
 }
 
 

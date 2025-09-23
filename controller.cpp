@@ -42,6 +42,9 @@ Controller::Controller(Model* model, View* view, QObject* parent)
         connect(tcpWin, &Tcpserver::tcpClientConnected, this, &Controller::onTcpClientConnected);
         connect(tcpWin, &Tcpserver::detectionDataReceived, this, &Controller::onDetectionDataReceived);
     }
+    
+    // 初始化多路流连接
+    initMultiStreamConnections();
 }
 
 Controller::~Controller()
@@ -838,5 +841,84 @@ void Controller::writeVideoFrame(const QImage& frame)
 
     // 写入视频帧
     m_videoWriter->write(bgrMat);
+}
+
+// 初始化多路流连接
+void Controller::initMultiStreamConnections()
+{
+    // 连接View的多路模式信号
+    connect(m_view, &View::videoDisplayModeChanged, this, &Controller::onVideoDisplayModeChanged);
+    connect(m_view, &View::gridLayoutChanged, this, &Controller::onGridLayoutChanged);
+    connect(m_view, &View::streamAdded, this, &Controller::onStreamAdded);
+    connect(m_view, &View::streamRemoved, this, &Controller::onStreamRemoved);
+}
+
+// 视频显示模式改变槽函数
+void Controller::onVideoDisplayModeChanged(bool multiMode)
+{
+    m_isMultiStreamMode = multiMode;
+    
+    if (multiMode) {
+        handleMultiStreamMode();
+    } else {
+        handleSingleStreamMode();
+    }
+    
+    // 添加事件消息
+    QString modeText = multiMode ? "多路模式" : "单路模式";
+    m_view->addEventMessage("info", "切换到" + modeText);
+    
+    qDebug() << "视频显示模式改变:" << modeText;
+}
+
+// 网格布局改变槽函数
+void Controller::onGridLayoutChanged(int gridNum)
+{
+    m_view->addEventMessage("info", QString("网格布局改变为: %1路").arg(gridNum));
+    qDebug() << "网格布局改变为:" << gridNum << "路";
+}
+
+// 视频流添加槽函数
+void Controller::onStreamAdded(const QString& url)
+{
+    m_view->addEventMessage("success", "添加视频流: " + url);
+    qDebug() << "添加视频流:" << url;
+}
+
+// 视频流移除槽函数
+void Controller::onStreamRemoved(int handle)
+{
+    m_view->addEventMessage("info", QString("移除视频流，句柄: %1").arg(handle));
+    qDebug() << "移除视频流，句柄:" << handle;
+}
+
+// 处理单路模式逻辑
+void Controller::handleSingleStreamMode()
+{
+    // 在单路模式下，继续使用现有的Model进行RTSP流处理
+    // 暂停多路流管理器（如果有的话）
+    MultiStreamManager* streamManager = m_view->getStreamManager();
+    if (streamManager) {
+        streamManager->pauseAllStreams();
+    }
+    
+    qDebug() << "切换到单路模式";
+}
+
+// 处理多路模式逻辑
+void Controller::handleMultiStreamMode()
+{
+    // 在多路模式下，暂停单路模式的流
+    if (m_model) {
+        m_model->stopStream(); // 停止单路RTSP连接
+    }
+    
+    // 恢复多路流管理器
+    MultiStreamManager* streamManager = m_view->getStreamManager();
+    if (streamManager) {
+        streamManager->resumeAllStreams();
+    }
+    
+    qDebug() << "切换到多路模式";
 }
 

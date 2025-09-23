@@ -555,7 +555,6 @@ controller (核心控制器)
 如有任何技术问题或建议，欢迎通过与我联系：
 
 📮 **联系**:<a href="https://lunexi.icu">https://lunexi.icu</a>
-g
 ---
 
 ### 📧 贡献者

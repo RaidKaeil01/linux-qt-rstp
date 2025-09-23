@@ -61,7 +61,12 @@ SOURCES       = Picture.cpp \
 		model.cpp \
 		view.cpp \
 		controller.cpp \
-		plan.cpp qrc_icon.cpp \
+		plan.cpp \
+		MultiStreamDecoder.cpp \
+		MultiStreamManager.cpp \
+		VideoGridWidget.cpp \
+		MultiStreamController.cpp \
+		MultiStreamView.cpp qrc_icon.cpp \
 		moc_Picture.cpp \
 		moc_Tcpserver.cpp \
 		moc_VideoLabel.cpp \
@@ -70,7 +75,12 @@ SOURCES       = Picture.cpp \
 		moc_model.cpp \
 		moc_view.cpp \
 		moc_controller.cpp \
-		moc_plan.cpp
+		moc_plan.cpp \
+		moc_MultiStreamDecoder.cpp \
+		moc_MultiStreamManager.cpp \
+		moc_VideoGridWidget.cpp \
+		moc_MultiStreamController.cpp \
+		moc_MultiStreamView.cpp
 OBJECTS       = Picture.o \
 		Tcpserver.o \
 		VideoLabel.o \
@@ -81,6 +91,11 @@ OBJECTS       = Picture.o \
 		view.o \
 		controller.o \
 		plan.o \
+		MultiStreamDecoder.o \
+		MultiStreamManager.o \
+		VideoGridWidget.o \
+		MultiStreamController.o \
+		MultiStreamView.o \
 		qrc_icon.o \
 		moc_Picture.o \
 		moc_Tcpserver.o \
@@ -90,7 +105,12 @@ OBJECTS       = Picture.o \
 		moc_model.o \
 		moc_view.o \
 		moc_controller.o \
-		moc_plan.o
+		moc_plan.o \
+		moc_MultiStreamDecoder.o \
+		moc_MultiStreamManager.o \
+		moc_VideoGridWidget.o \
+		moc_MultiStreamController.o \
+		moc_MultiStreamView.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -122,6 +142,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_input_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_kms_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_linuxaccessibility_support_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_multimedia.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_multimediawidgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri \
@@ -177,7 +199,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		model.h \
 		view.h \
 		controller.h \
-		plan.h Picture.cpp \
+		plan.h \
+		HandleManager.h \
+		MultiStreamDecoder.h \
+		MultiStreamManager.h \
+		VideoGridWidget.h \
+		MultiStreamController.h \
+		MultiStreamView.h Picture.cpp \
 		Tcpserver.cpp \
 		VideoLabel.cpp \
 		detectlist.cpp \
@@ -186,7 +214,12 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		model.cpp \
 		view.cpp \
 		controller.cpp \
-		plan.cpp
+		plan.cpp \
+		MultiStreamDecoder.cpp \
+		MultiStreamManager.cpp \
+		VideoGridWidget.cpp \
+		MultiStreamController.cpp \
+		MultiStreamView.cpp
 QMAKE_TARGET  = rtsp
 DESTDIR       = 
 TARGET        = rtsp
@@ -229,6 +262,8 @@ Makefile: rtsp.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /u
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_input_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_kms_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_linuxaccessibility_support_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_multimedia.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_multimediawidgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri \
@@ -309,6 +344,8 @@ Makefile: rtsp.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /u
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_input_support_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_kms_support_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_linuxaccessibility_support_private.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_multimedia.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_multimediawidgets.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_network_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_opengl.pri:
@@ -373,8 +410,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents icon.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents Picture.h Tcpserver.h VideoLabel.h common.h detectlist.h mainwindow.h model.h view.h controller.h plan.h $(DISTDIR)/
-	$(COPY_FILE) --parents Picture.cpp Tcpserver.cpp VideoLabel.cpp detectlist.cpp main.cpp mainwindow.cpp model.cpp view.cpp controller.cpp plan.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents Picture.h Tcpserver.h VideoLabel.h common.h detectlist.h mainwindow.h model.h view.h controller.h plan.h HandleManager.h MultiStreamDecoder.h MultiStreamManager.h VideoGridWidget.h MultiStreamController.h MultiStreamView.h $(DISTDIR)/
+	$(COPY_FILE) --parents Picture.cpp Tcpserver.cpp VideoLabel.cpp detectlist.cpp main.cpp mainwindow.cpp model.cpp view.cpp controller.cpp plan.cpp MultiStreamDecoder.cpp MultiStreamManager.cpp VideoGridWidget.cpp MultiStreamController.cpp MultiStreamView.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -410,11 +447,11 @@ qrc_icon.cpp: icon.qrc \
 		icon/reset.png \
 		icon/draw.png \
 		icon/closevideo.png \
+		icon/logo-xijiangyue.png \
 		icon/addvideo.png \
 		icon/screenshot.png \
 		icon/tcp.png \
 		icon/list.png \
-		icon/lmx.png \
 		icon/AI.png \
 		icon/rect.png \
 		icon/album.png \
@@ -428,9 +465,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_Picture.cpp moc_Tcpserver.cpp moc_VideoLabel.cpp moc_detectlist.cpp moc_mainwindow.cpp moc_model.cpp moc_view.cpp moc_controller.cpp moc_plan.cpp
+compiler_moc_header_make_all: moc_Picture.cpp moc_Tcpserver.cpp moc_VideoLabel.cpp moc_detectlist.cpp moc_mainwindow.cpp moc_model.cpp moc_view.cpp moc_controller.cpp moc_plan.cpp moc_MultiStreamDecoder.cpp moc_MultiStreamManager.cpp moc_VideoGridWidget.cpp moc_MultiStreamController.cpp moc_MultiStreamView.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_Picture.cpp moc_Tcpserver.cpp moc_VideoLabel.cpp moc_detectlist.cpp moc_mainwindow.cpp moc_model.cpp moc_view.cpp moc_controller.cpp moc_plan.cpp
+	-$(DEL_FILE) moc_Picture.cpp moc_Tcpserver.cpp moc_VideoLabel.cpp moc_detectlist.cpp moc_mainwindow.cpp moc_model.cpp moc_view.cpp moc_controller.cpp moc_plan.cpp moc_MultiStreamDecoder.cpp moc_MultiStreamManager.cpp moc_VideoGridWidget.cpp moc_MultiStreamController.cpp moc_MultiStreamView.cpp
 moc_Picture.cpp: Picture.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -465,6 +502,11 @@ moc_model.cpp: model.h \
 moc_view.cpp: view.h \
 		VideoLabel.h \
 		common.h \
+		VideoGridWidget.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include view.h -o moc_view.cpp
@@ -474,6 +516,11 @@ moc_controller.cpp: controller.h \
 		view.h \
 		VideoLabel.h \
 		common.h \
+		VideoGridWidget.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h \
 		Picture.h \
 		Tcpserver.h \
 		detectlist.h \
@@ -485,6 +532,48 @@ moc_plan.cpp: plan.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include plan.h -o moc_plan.cpp
+
+moc_MultiStreamDecoder.cpp: MultiStreamDecoder.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include MultiStreamDecoder.h -o moc_MultiStreamDecoder.cpp
+
+moc_MultiStreamManager.cpp: MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include MultiStreamManager.h -o moc_MultiStreamManager.cpp
+
+moc_VideoGridWidget.cpp: VideoGridWidget.h \
+		VideoLabel.h \
+		common.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include VideoGridWidget.h -o moc_VideoGridWidget.cpp
+
+moc_MultiStreamController.cpp: MultiStreamController.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		VideoGridWidget.h \
+		VideoLabel.h \
+		common.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include MultiStreamController.h -o moc_MultiStreamController.cpp
+
+moc_MultiStreamView.cpp: MultiStreamView.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h \
+		VideoGridWidget.h \
+		VideoLabel.h \
+		common.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/stufox/workspace2.0/luckfox_pro3.0/Linux-QT-RTSP -I/usr/include/x86_64-linux-gnu -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include MultiStreamView.h -o moc_MultiStreamView.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -528,6 +617,11 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		view.h \
 		VideoLabel.h \
 		common.h \
+		VideoGridWidget.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h \
 		controller.h \
 		Picture.h \
 		Tcpserver.h \
@@ -539,7 +633,12 @@ model.o: model.cpp model.h
 
 view.o: view.cpp view.h \
 		VideoLabel.h \
-		common.h
+		common.h \
+		VideoGridWidget.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o view.o view.cpp
 
 controller.o: controller.cpp controller.h \
@@ -547,6 +646,11 @@ controller.o: controller.cpp controller.h \
 		view.h \
 		VideoLabel.h \
 		common.h \
+		VideoGridWidget.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h \
 		Picture.h \
 		Tcpserver.h \
 		detectlist.h \
@@ -556,6 +660,38 @@ controller.o: controller.cpp controller.h \
 plan.o: plan.cpp plan.h \
 		detectlist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o plan.o plan.cpp
+
+MultiStreamDecoder.o: MultiStreamDecoder.cpp MultiStreamDecoder.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MultiStreamDecoder.o MultiStreamDecoder.cpp
+
+MultiStreamManager.o: MultiStreamManager.cpp MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MultiStreamManager.o MultiStreamManager.cpp
+
+VideoGridWidget.o: VideoGridWidget.cpp VideoGridWidget.h \
+		VideoLabel.h \
+		common.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o VideoGridWidget.o VideoGridWidget.cpp
+
+MultiStreamController.o: MultiStreamController.cpp MultiStreamController.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		VideoGridWidget.h \
+		VideoLabel.h \
+		common.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MultiStreamController.o MultiStreamController.cpp
+
+MultiStreamView.o: MultiStreamView.cpp MultiStreamView.h \
+		MultiStreamManager.h \
+		MultiStreamDecoder.h \
+		HandleManager.h \
+		MultiStreamController.h \
+		VideoGridWidget.h \
+		VideoLabel.h \
+		common.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MultiStreamView.o MultiStreamView.cpp
 
 qrc_icon.o: qrc_icon.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_icon.o qrc_icon.cpp
@@ -586,6 +722,21 @@ moc_controller.o: moc_controller.cpp
 
 moc_plan.o: moc_plan.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_plan.o moc_plan.cpp
+
+moc_MultiStreamDecoder.o: moc_MultiStreamDecoder.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MultiStreamDecoder.o moc_MultiStreamDecoder.cpp
+
+moc_MultiStreamManager.o: moc_MultiStreamManager.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MultiStreamManager.o moc_MultiStreamManager.cpp
+
+moc_VideoGridWidget.o: moc_VideoGridWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_VideoGridWidget.o moc_VideoGridWidget.cpp
+
+moc_MultiStreamController.o: moc_MultiStreamController.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MultiStreamController.o moc_MultiStreamController.cpp
+
+moc_MultiStreamView.o: moc_MultiStreamView.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MultiStreamView.o moc_MultiStreamView.cpp
 
 ####### Install
 

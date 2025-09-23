@@ -23,8 +23,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Controller_t {
-    QByteArrayData data[26];
-    char stringdata0[375];
+    QByteArrayData data[34];
+    char stringdata0[480];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -41,30 +41,41 @@ QT_MOC_LITERAL(4, 59, 23), // "FunButtonClickedHandler"
 QT_MOC_LITERAL(5, 83, 20), // "onTcpClientConnected"
 QT_MOC_LITERAL(6, 104, 2), // "ip"
 QT_MOC_LITERAL(7, 107, 4), // "port"
-QT_MOC_LITERAL(8, 112, 18), // "onAddCameraClicked"
-QT_MOC_LITERAL(9, 131, 12), // "onFrameReady"
-QT_MOC_LITERAL(10, 144, 3), // "img"
-QT_MOC_LITERAL(11, 148, 28), // "onDetectListSelectionChanged"
-QT_MOC_LITERAL(12, 177, 9), // "QSet<int>"
-QT_MOC_LITERAL(13, 187, 11), // "selectedIds"
-QT_MOC_LITERAL(14, 199, 20), // "onRectangleConfirmed"
-QT_MOC_LITERAL(15, 220, 12), // "RectangleBox"
-QT_MOC_LITERAL(16, 233, 4), // "rect"
-QT_MOC_LITERAL(17, 238, 30), // "onNormalizedRectangleConfirmed"
-QT_MOC_LITERAL(18, 269, 22), // "NormalizedRectangleBox"
-QT_MOC_LITERAL(19, 292, 8), // "normRect"
-QT_MOC_LITERAL(20, 301, 7), // "absRect"
-QT_MOC_LITERAL(21, 309, 13), // "onPlanApplied"
-QT_MOC_LITERAL(22, 323, 8), // "PlanData"
-QT_MOC_LITERAL(23, 332, 4), // "plan"
-QT_MOC_LITERAL(24, 337, 23), // "onDetectionDataReceived"
-QT_MOC_LITERAL(25, 361, 13) // "detectionData"
+QT_MOC_LITERAL(8, 112, 25), // "onVideoDisplayModeChanged"
+QT_MOC_LITERAL(9, 138, 9), // "multiMode"
+QT_MOC_LITERAL(10, 148, 19), // "onGridLayoutChanged"
+QT_MOC_LITERAL(11, 168, 7), // "gridNum"
+QT_MOC_LITERAL(12, 176, 13), // "onStreamAdded"
+QT_MOC_LITERAL(13, 190, 3), // "url"
+QT_MOC_LITERAL(14, 194, 15), // "onStreamRemoved"
+QT_MOC_LITERAL(15, 210, 6), // "handle"
+QT_MOC_LITERAL(16, 217, 18), // "onAddCameraClicked"
+QT_MOC_LITERAL(17, 236, 12), // "onFrameReady"
+QT_MOC_LITERAL(18, 249, 3), // "img"
+QT_MOC_LITERAL(19, 253, 28), // "onDetectListSelectionChanged"
+QT_MOC_LITERAL(20, 282, 9), // "QSet<int>"
+QT_MOC_LITERAL(21, 292, 11), // "selectedIds"
+QT_MOC_LITERAL(22, 304, 20), // "onRectangleConfirmed"
+QT_MOC_LITERAL(23, 325, 12), // "RectangleBox"
+QT_MOC_LITERAL(24, 338, 4), // "rect"
+QT_MOC_LITERAL(25, 343, 30), // "onNormalizedRectangleConfirmed"
+QT_MOC_LITERAL(26, 374, 22), // "NormalizedRectangleBox"
+QT_MOC_LITERAL(27, 397, 8), // "normRect"
+QT_MOC_LITERAL(28, 406, 7), // "absRect"
+QT_MOC_LITERAL(29, 414, 13), // "onPlanApplied"
+QT_MOC_LITERAL(30, 428, 8), // "PlanData"
+QT_MOC_LITERAL(31, 437, 4), // "plan"
+QT_MOC_LITERAL(32, 442, 23), // "onDetectionDataReceived"
+QT_MOC_LITERAL(33, 466, 13) // "detectionData"
 
     },
     "Controller\0ButtonClickedHandler\0\0"
     "ServoButtonClickedHandler\0"
     "FunButtonClickedHandler\0onTcpClientConnected\0"
-    "ip\0port\0onAddCameraClicked\0onFrameReady\0"
+    "ip\0port\0onVideoDisplayModeChanged\0"
+    "multiMode\0onGridLayoutChanged\0gridNum\0"
+    "onStreamAdded\0url\0onStreamRemoved\0"
+    "handle\0onAddCameraClicked\0onFrameReady\0"
     "img\0onDetectListSelectionChanged\0"
     "QSet<int>\0selectedIds\0onRectangleConfirmed\0"
     "RectangleBox\0rect\0onNormalizedRectangleConfirmed\0"
@@ -80,7 +91,7 @@ static const uint qt_meta_data_Controller[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -88,30 +99,38 @@ static const uint qt_meta_data_Controller[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   69,    2, 0x0a /* Public */,
-       3,    0,   70,    2, 0x0a /* Public */,
-       4,    0,   71,    2, 0x0a /* Public */,
-       5,    2,   72,    2, 0x0a /* Public */,
-       8,    0,   77,    2, 0x08 /* Private */,
-       9,    1,   78,    2, 0x08 /* Private */,
-      11,    1,   81,    2, 0x08 /* Private */,
-      14,    1,   84,    2, 0x08 /* Private */,
-      17,    2,   87,    2, 0x08 /* Private */,
-      21,    1,   92,    2, 0x08 /* Private */,
-      24,    1,   95,    2, 0x08 /* Private */,
+       1,    0,   89,    2, 0x0a /* Public */,
+       3,    0,   90,    2, 0x0a /* Public */,
+       4,    0,   91,    2, 0x0a /* Public */,
+       5,    2,   92,    2, 0x0a /* Public */,
+       8,    1,   97,    2, 0x0a /* Public */,
+      10,    1,  100,    2, 0x0a /* Public */,
+      12,    1,  103,    2, 0x0a /* Public */,
+      14,    1,  106,    2, 0x0a /* Public */,
+      16,    0,  109,    2, 0x08 /* Private */,
+      17,    1,  110,    2, 0x08 /* Private */,
+      19,    1,  113,    2, 0x08 /* Private */,
+      22,    1,  116,    2, 0x08 /* Private */,
+      25,    2,  119,    2, 0x08 /* Private */,
+      29,    1,  124,    2, 0x08 /* Private */,
+      32,    1,  127,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString, QMetaType::UShort,    6,    7,
+    QMetaType::Void, QMetaType::Bool,    9,
+    QMetaType::Void, QMetaType::Int,   11,
+    QMetaType::Void, QMetaType::QString,   13,
+    QMetaType::Void, QMetaType::Int,   15,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QImage,   10,
-    QMetaType::Void, 0x80000000 | 12,   13,
-    QMetaType::Void, 0x80000000 | 15,   16,
-    QMetaType::Void, 0x80000000 | 18, 0x80000000 | 15,   19,   20,
-    QMetaType::Void, 0x80000000 | 22,   23,
-    QMetaType::Void, QMetaType::QString,   25,
+    QMetaType::Void, QMetaType::QImage,   18,
+    QMetaType::Void, 0x80000000 | 20,   21,
+    QMetaType::Void, 0x80000000 | 23,   24,
+    QMetaType::Void, 0x80000000 | 26, 0x80000000 | 23,   27,   28,
+    QMetaType::Void, 0x80000000 | 30,   31,
+    QMetaType::Void, QMetaType::QString,   33,
 
        0        // eod
 };
@@ -126,19 +145,23 @@ void Controller::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 1: _t->ServoButtonClickedHandler(); break;
         case 2: _t->FunButtonClickedHandler(); break;
         case 3: _t->onTcpClientConnected((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< quint16(*)>(_a[2]))); break;
-        case 4: _t->onAddCameraClicked(); break;
-        case 5: _t->onFrameReady((*reinterpret_cast< const QImage(*)>(_a[1]))); break;
-        case 6: _t->onDetectListSelectionChanged((*reinterpret_cast< const QSet<int>(*)>(_a[1]))); break;
-        case 7: _t->onRectangleConfirmed((*reinterpret_cast< const RectangleBox(*)>(_a[1]))); break;
-        case 8: _t->onNormalizedRectangleConfirmed((*reinterpret_cast< const NormalizedRectangleBox(*)>(_a[1])),(*reinterpret_cast< const RectangleBox(*)>(_a[2]))); break;
-        case 9: _t->onPlanApplied((*reinterpret_cast< const PlanData(*)>(_a[1]))); break;
-        case 10: _t->onDetectionDataReceived((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 4: _t->onVideoDisplayModeChanged((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 5: _t->onGridLayoutChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: _t->onStreamAdded((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 7: _t->onStreamRemoved((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 8: _t->onAddCameraClicked(); break;
+        case 9: _t->onFrameReady((*reinterpret_cast< const QImage(*)>(_a[1]))); break;
+        case 10: _t->onDetectListSelectionChanged((*reinterpret_cast< const QSet<int>(*)>(_a[1]))); break;
+        case 11: _t->onRectangleConfirmed((*reinterpret_cast< const RectangleBox(*)>(_a[1]))); break;
+        case 12: _t->onNormalizedRectangleConfirmed((*reinterpret_cast< const NormalizedRectangleBox(*)>(_a[1])),(*reinterpret_cast< const RectangleBox(*)>(_a[2]))); break;
+        case 13: _t->onPlanApplied((*reinterpret_cast< const PlanData(*)>(_a[1]))); break;
+        case 14: _t->onDetectionDataReceived((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<int*>(_a[0]) = -1; break;
-        case 6:
+        case 10:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
@@ -178,13 +201,13 @@ int Controller::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 15;
     }
     return _id;
 }

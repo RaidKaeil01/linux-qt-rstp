@@ -19,7 +19,12 @@ SOURCES += \
     model.cpp \
     view.cpp \
     controller.cpp \
-    plan.cpp
+    plan.cpp \
+    MultiStreamDecoder.cpp \
+    MultiStreamManager.cpp \
+    VideoGridWidget.cpp \
+    MultiStreamController.cpp \
+    MultiStreamView.cpp
 
 HEADERS += \
     Picture.h \
@@ -31,7 +36,13 @@ HEADERS += \
     model.h \
     view.h \
     controller.h \
-    plan.h
+    plan.h \
+    HandleManager.h \
+    MultiStreamDecoder.h \
+    MultiStreamManager.h \
+    VideoGridWidget.h \
+    MultiStreamController.h \
+    MultiStreamView.h
 
 FORMS += \
     mainwindow.ui

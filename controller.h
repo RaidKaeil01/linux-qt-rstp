@@ -12,6 +12,8 @@
 #include "Tcpserver.h"
 #include "VideoLabel.h"  // 包含RectangleBox定义
 #include "detectlist.h"  // 包含DetectList类
+#include "MultiStreamManager.h"
+#include "MultiStreamController.h"
 
 class Plan; // 前向声明
 
@@ -32,6 +34,12 @@ public slots:
     void ServoButtonClickedHandler(); //云台按键槽
     void FunButtonClickedHandler();   //功能按钮槽
     void onTcpClientConnected(const QString& ip, quint16 port); // 新增：处理TCP客户端连接成功
+    
+    // 多路模式槽函数
+    void onVideoDisplayModeChanged(bool multiMode); // 视频显示模式改变
+    void onGridLayoutChanged(int gridNum);           // 网格布局改变
+    void onStreamAdded(const QString& url);          // 视频流添加
+    void onStreamRemoved(int handle);                // 视频流移除
 
         
 private slots:
@@ -66,4 +74,10 @@ private:
     
     // 功能按钮状态管理
     void updateButtonDependencies(int clickedButtonId, bool isChecked);
+    
+    // 多路模式支持
+    bool m_isMultiStreamMode = false;         // 当前是否为多路模式
+    void initMultiStreamConnections();        // 初始化多路流信号连接
+    void handleSingleStreamMode();            // 处理单路模式逻辑
+    void handleMultiStreamMode();             // 处理多路模式逻辑
 };
